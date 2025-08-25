@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchServers, fetchMembers } from "../api/servers";
 import { Server, Users, Copy, Loader2, ChevronRight, Hash, Calendar, Crown } from 'lucide-react';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function ServerList() {
     const [servers, setServers] = useState([]);
@@ -55,9 +56,8 @@ export default function ServerList() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-discord-blurple" />
-                <span className="ml-3 text-lg text-gray-600">Đang tải servers...</span>
+            <div className="py-12 animate-fade-in">
+                <LoadingSpinner size="lg" text="Đang tải servers..." />
             </div>
         );
     }
@@ -66,15 +66,16 @@ export default function ServerList() {
         <div className="space-y-8">
             {/* Servers Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {servers.map((server) => (
+                {servers.map((server, index) => (
                     <div
                         key={server.guild_id}
                         onClick={() => setSelectedServer(server)}
-                        className={`card-hover cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                        className={`card-hover cursor-pointer hover-lift animate-fade-in ${
                             selectedServer?.guild_id === server.guild_id
                                 ? 'ring-2 ring-discord-blurple shadow-large'
                                 : ''
                         }`}
+                        style={{ animationDelay: `${index * 0.1}s` }}
                     >
                         <div className="p-6">
                             <div className="flex items-center space-x-4">
@@ -111,11 +112,11 @@ export default function ServerList() {
 
             {/* Selected Server Members */}
             {selectedServer && (
-                <div className="card">
+                <div className="card animate-slide-up">
                     <div className="px-6 py-4 border-b border-gray-200">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
-                                <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center text-white text-lg font-bold">
+                                <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center text-white text-lg font-bold animate-scale-in">
                                     {selectedServer.guild_name.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
@@ -130,7 +131,7 @@ export default function ServerList() {
                             </div>
                             <button
                                 onClick={() => setSelectedServer(null)}
-                                className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                className="text-gray-400 hover:text-gray-600 hover:rotate-90 transition-all duration-200"
                             >
                                 ✕
                             </button>
@@ -139,16 +140,16 @@ export default function ServerList() {
 
                     <div className="p-6">
                         {loadingMembers ? (
-                            <div className="flex items-center justify-center py-8">
-                                <Loader2 className="w-6 h-6 animate-spin text-discord-blurple" />
-                                <span className="ml-3 text-gray-600">Đang tải thành viên...</span>
+                            <div className="py-8">
+                                <LoadingSpinner size="md" text="Đang tải thành viên..." />
                             </div>
                         ) : (
                             <div className="space-y-3">
-                                {members.map((member) => (
+                                {members.map((member, index) => (
                                     <div
                                         key={member.id}
-                                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200"
+                                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 animate-fade-in"
+                                        style={{ animationDelay: `${index * 0.05}s` }}
                                     >
                                         <div className="flex items-center space-x-3">
                                             <div className="w-10 h-10 bg-discord-greyple rounded-full flex items-center justify-center text-white font-semibold">
