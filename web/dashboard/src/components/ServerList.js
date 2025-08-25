@@ -115,74 +115,77 @@ export default function ServerList() {
             {/* Selected Server Members */}
             {selectedServer && (
                 <div className="card animate-slide-up">
-                    <div className="px-6 py-4 border-b border-gray-200">
+                    <div className="px-4 py-3 md:px-6 md:py-4 border-b border-gray-200">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
-                                <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center text-white text-lg font-bold animate-scale-in">
+                                <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-primary rounded-lg flex items-center justify-center text-white text-base md:text-lg font-bold animate-scale-in">
                                     {selectedServer.guild_name.charAt(0).toUpperCase()}
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-semibold text-gray-900">
+                                <div className="min-w-0 flex-1">
+                                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 truncate">
                                         {selectedServer.guild_name}
                                     </h3>
-                                    <div className="flex items-center text-sm text-gray-500">
-                                        <Users className="w-4 h-4 mr-1" />
+                                    <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                        <Users className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                                         <span>{members.length} thành viên</span>
                                     </div>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setSelectedServer(null)}
-                                className="text-gray-400 hover:text-gray-600 hover:rotate-90 transition-all duration-200"
+                                className="text-gray-400 hover:text-gray-600 hover:rotate-90 transition-all duration-200 p-1 md:p-2"
                             >
                                 ✕
                             </button>
                         </div>
                     </div>
 
-                    <div className="p-6">
+                    <div className="p-4 md:p-6">
                         {loadingMembers ? (
                             <div className="py-8">
                                 <LoadingSpinner size="md" text="Đang tải thành viên..." />
                             </div>
                         ) : (
-                            <div className="space-y-3">
+                            <div className="space-y-2 md:space-y-3">
                                 {members.map((member, index) => (
                                     <div
                                         key={member.id}
-                                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 animate-fade-in"
+                                        className="flex items-center justify-between p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 animate-fade-in"
                                         style={{ animationDelay: `${index * 0.05}s` }}
                                     >
-                                        <div className="flex items-center space-x-3">
-                                            <div className="w-10 h-10 bg-discord-greyple rounded-full flex items-center justify-center text-white font-semibold">
+                                        <div className="flex items-center space-x-3 min-w-0 flex-1">
+                                            <div className="w-8 h-8 md:w-10 md:h-10 bg-discord-greyple rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                                                 {member.display_name.charAt(0).toUpperCase()}
                                             </div>
-                                            <div>
-                                                <div className="flex items-center space-x-2">
-                                                    <span className="font-medium text-gray-900">
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+                                                    <span className="font-medium text-gray-900 truncate text-sm md:text-base">
                                                         {member.display_name}
                                                     </span>
                                                     {member.display_name !== member.name && (
-                                                        <span className="text-sm text-gray-500">
+                                                        <span className="text-xs md:text-sm text-gray-500 truncate">
                                                             ({member.name})
                                                         </span>
                                                     )}
                                                 </div>
-                                                <div className="flex items-center text-xs text-gray-500">
-                                                    <Hash className="w-3 h-3 mr-1" />
-                                                    <span>{member.id}</span>
+                                                <div className="flex items-center text-xs text-gray-500 mt-1">
+                                                    <Hash className="w-3 h-3 mr-1 flex-shrink-0" />
+                                                    <span className="truncate">{member.id}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <button
                                             onClick={() => handleCopyId(member.id)}
-                                            className={`btn-secondary flex items-center space-x-1 text-xs ${
+                                            className={`btn-secondary flex items-center space-x-1 text-xs flex-shrink-0 ml-2 ${
                                                 copiedId === member.id ? 'bg-green-50 text-green-600 border-green-200' : ''
                                             }`}
                                         >
                                             <Copy className="w-3 h-3" />
-                                            <span>
+                                            <span className="hidden sm:inline">
                                                 {copiedId === member.id ? 'Đã sao chép!' : 'Sao chép ID'}
+                                            </span>
+                                            <span className="sm:hidden">
+                                                {copiedId === member.id ? '✓' : 'Copy'}
                                             </span>
                                         </button>
                                     </div>
