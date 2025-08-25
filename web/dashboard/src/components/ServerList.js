@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchServers, fetchMembers } from "../api/servers";
 import { Server, Users, Copy, Loader2, ChevronRight, Hash, Calendar, Crown } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
+import MemberTable from './MemberTable';
 
 export default function ServerList() {
     const [servers, setServers] = useState([]);
@@ -70,11 +71,10 @@ export default function ServerList() {
                     <div
                         key={server.guild_id}
                         onClick={() => setSelectedServer(server)}
-                        className={`card-hover cursor-pointer hover-lift animate-fade-in ${
-                            selectedServer?.guild_id === server.guild_id
-                                ? 'ring-2 ring-discord-blurple shadow-large'
-                                : ''
-                        }`}
+                        className={`card-hover cursor-pointer hover-lift animate-fade-in ${selectedServer?.guild_id === server.guild_id
+                            ? 'ring-2 ring-discord-blurple shadow-large'
+                            : ''
+                            }`}
                         style={{ animationDelay: `${index * 0.1}s` }}
                     >
                         <div className="p-4 md:p-6">
@@ -140,57 +140,14 @@ export default function ServerList() {
                         </div>
                     </div>
 
-                    <div className="p-4 md:p-6">
-                        {loadingMembers ? (
-                            <div className="py-8">
-                                <LoadingSpinner size="md" text="Đang tải thành viên..." />
-                            </div>
-                        ) : (
-                            <div className="space-y-2 md:space-y-3">
-                                {members.map((member, index) => (
-                                    <div
-                                        key={member.id}
-                                        className="flex items-center justify-between p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 animate-fade-in"
-                                        style={{ animationDelay: `${index * 0.05}s` }}
-                                    >
-                                        <div className="flex items-center space-x-3 min-w-0 flex-1">
-                                            <div className="w-8 h-8 md:w-10 md:h-10 bg-discord-greyple rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
-                                                {member.display_name.charAt(0).toUpperCase()}
-                                            </div>
-                                            <div className="min-w-0 flex-1">
-                                                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
-                                                    <span className="font-medium text-gray-900 truncate text-sm md:text-base">
-                                                        {member.display_name}
-                                                    </span>
-                                                    {member.display_name !== member.name && (
-                                                        <span className="text-xs md:text-sm text-gray-500 truncate">
-                                                            ({member.name})
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <div className="flex items-center text-xs text-gray-500 mt-1">
-                                                    <Hash className="w-3 h-3 mr-1 flex-shrink-0" />
-                                                    <span className="truncate">{member.id}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={() => handleCopyId(member.id)}
-                                            className={`btn-secondary flex items-center space-x-1 text-xs flex-shrink-0 ml-2 ${
-                                                copiedId === member.id ? 'bg-green-50 text-green-600 border-green-200' : ''
-                                            }`}
-                                        >
-                                            <Copy className="w-3 h-3" />
-                                            <span className="hidden sm:inline">
-                                                {copiedId === member.id ? 'Đã sao chép!' : 'Sao chép ID'}
-                                            </span>
-                                            <span className="sm:hidden">
-                                                {copiedId === member.id ? '✓' : 'Copy'}
-                                            </span>
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
+                    <div >
+                        {selectedServer && (
+                            loadingMembers ? (
+                                <p>Đang tải thành viên...</p>
+                            ) : (
+                                <MemberTable members={members} />
+                            )
+
                         )}
                     </div>
                 </div>

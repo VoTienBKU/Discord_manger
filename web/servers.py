@@ -9,5 +9,6 @@ def setup_routes(bot: commands.Bot):
         servers = [
             {"guild_id": str(g.id), "guild_name": g.name}
             for g in bot.guilds
+            if "HK251" in g.name
         ]
         return { "servers": servers }

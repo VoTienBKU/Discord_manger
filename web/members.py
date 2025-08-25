@@ -10,8 +10,16 @@ def setup_routes(bot: commands.Bot):
         guild = bot.get_guild(guild_id)
         if not guild:
             return {"error": "Guild not found"}
-        members = [
-            {"id": m.id, "name": m.name, "display_name": m.display_name}
-            for m in guild.members if not m.bot
-        ]
+        
+        members = []
+        for m in guild.members:
+            if m.bot:
+                continue
+            members.append({
+                "id": m.id,
+                "name": m.name,
+                "display_name": m.display_name,
+                "roles": [r.name for r in m.roles if r.name not in ("@everyone", "TA")]
+            })
+        
         return {"members": members}
