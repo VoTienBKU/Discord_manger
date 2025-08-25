@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchServers, fetchMembers } from "../api/servers";
+import { Server, Users, Copy, Loader2, ChevronRight, Hash, Calendar, Crown } from 'lucide-react';
 
 export default function ServerList() {
     const [servers, setServers] = useState([]);
@@ -7,6 +8,7 @@ export default function ServerList() {
     const [selectedServer, setSelectedServer] = useState(null);
     const [members, setMembers] = useState([]);
     const [loadingMembers, setLoadingMembers] = useState(false);
+    const [copiedId, setCopiedId] = useState(null);
 
     // Load servers
     useEffect(() => {
@@ -41,92 +43,150 @@ export default function ServerList() {
         getMembers();
     }, [selectedServer]);
 
-    if (loading) return <div style={{ padding: "20px" }}>Đang tải servers...</div>;
+    const handleCopyId = async (id) => {
+        try {
+            await navigator.clipboard.writeText(id);
+            setCopiedId(id);
+            setTimeout(() => setCopiedId(null), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-discord-blurple" />
+                <span className="ml-3 text-lg text-gray-600">Đang tải servers...</span>
+            </div>
+        );
+    }
 
     return (
-        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-            <h2 style={{ fontSize: "24px", marginBottom: "15px" }}>Servers</h2>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "15px" }}>
-                {servers.map((s) => (
+        <div className="space-y-8">
+            {/* Servers Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {servers.map((server) => (
                     <div
-                        key={s.guild_id}
-                        onClick={() => setSelectedServer(s)}
-                        style={{
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            padding: "12px",
-                            border: "1px solid #ddd",
-                            borderRadius: "8px",
-                            backgroundColor: "#fff",
-                            boxShadow: selectedServer?.guild_id === s.guild_id ? "0 0 0 2px #4f46e5" : "0 2px 6px rgba(0,0,0,0.1)",
-                            transition: "0.2s",
-                        }}
+                        key={server.guild_id}
+                        onClick={() => setSelectedServer(server)}
+                        className={`card-hover cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                            selectedServer?.guild_id === server.guild_id
+                                ? 'ring-2 ring-discord-blurple shadow-large'
+                                : ''
+                        }`}
                     >
-                        <div
-                            style={{
-                                height: "50px",
-                                width: "50px",
-                                borderRadius: "50%",
-                                backgroundColor: "#4f46e5",
-                                color: "white",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontWeight: "bold",
-                                fontSize: "18px",
-                            }}
-                        >
-                            {s.guild_name.charAt(0).toUpperCase()}
-                        </div>
-                        <div style={{ marginLeft: "12px" }}>
-                            <div style={{ fontWeight: "500" }}>{s.guild_name}</div>
-                            <div style={{ fontSize: "12px", color: "#666" }}>ID: {s.guild_id}</div>
+                        <div className="p-6">
+                            <div className="flex items-center space-x-4">
+                                <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                                    {server.guild_name.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-lg font-semibold text-gray-900 truncate">
+                                        {server.guild_name}
+                                    </h3>
+                                    <div className="flex items-center text-sm text-gray-500 mt-1">
+                                        <Hash className="w-4 h-4 mr-1" />
+                                        <span className="truncate">{server.guild_id}</span>
+                                    </div>
+                                </div>
+                                <ChevronRight className="w-5 h-5 text-gray-400" />
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-between">
+                                <div className="flex items-center text-sm text-gray-600">
+                                    <Server className="w-4 h-4 mr-1" />
+                                    <span>Discord Server</span>
+                                </div>
+                                {selectedServer?.guild_id === server.guild_id && (
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-discord-blurple text-white">
+                                        Đã chọn
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))}
             </div>
 
+            {/* Selected Server Members */}
             {selectedServer && (
-                <div style={{ marginTop: "30px" }}>
-                    <h3 style={{ fontSize: "20px", marginBottom: "10px" }}>
-                        Thành viên trong {selectedServer.guild_name}
-                    </h3>
-                    {loadingMembers ? (
-                        <p>Đang tải thành viên...</p>
-                    ) : (
-                        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                            {members.map((m) => (
-                                <li
-                                    key={m.id}
-                                    style={{
-                                        padding: "8px 0",
-                                        borderBottom: "1px solid #eee",
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                    }}
-                                >
-                                    <span>
-                                        {m.display_name}{" "}
-                                        <span style={{ fontSize: "12px", color: "#777" }}>({m.name})</span>
-                                    </span>
-                                    <button
-                                        onClick={() => navigator.clipboard.writeText(m.id)}
-                                        style={{
-                                            padding: "4px 8px",
-                                            fontSize: "12px",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "4px",
-                                            cursor: "pointer",
-                                        }}
+                <div className="card">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center text-white text-lg font-bold">
+                                    {selectedServer.guild_name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-semibold text-gray-900">
+                                        {selectedServer.guild_name}
+                                    </h3>
+                                    <div className="flex items-center text-sm text-gray-500">
+                                        <Users className="w-4 h-4 mr-1" />
+                                        <span>{members.length} thành viên</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setSelectedServer(null)}
+                                className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="p-6">
+                        {loadingMembers ? (
+                            <div className="flex items-center justify-center py-8">
+                                <Loader2 className="w-6 h-6 animate-spin text-discord-blurple" />
+                                <span className="ml-3 text-gray-600">Đang tải thành viên...</span>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {members.map((member) => (
+                                    <div
+                                        key={member.id}
+                                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200"
                                     >
-                                        Sao chép ID
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-10 h-10 bg-discord-greyple rounded-full flex items-center justify-center text-white font-semibold">
+                                                {member.display_name.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <div className="flex items-center space-x-2">
+                                                    <span className="font-medium text-gray-900">
+                                                        {member.display_name}
+                                                    </span>
+                                                    {member.display_name !== member.name && (
+                                                        <span className="text-sm text-gray-500">
+                                                            ({member.name})
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center text-xs text-gray-500">
+                                                    <Hash className="w-3 h-3 mr-1" />
+                                                    <span>{member.id}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handleCopyId(member.id)}
+                                            className={`btn-secondary flex items-center space-x-1 text-xs ${
+                                                copiedId === member.id ? 'bg-green-50 text-green-600 border-green-200' : ''
+                                            }`}
+                                        >
+                                            <Copy className="w-3 h-3" />
+                                            <span>
+                                                {copiedId === member.id ? 'Đã sao chép!' : 'Sao chép ID'}
+                                            </span>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </div>
