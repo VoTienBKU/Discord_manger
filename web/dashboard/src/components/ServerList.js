@@ -65,7 +65,7 @@ export default function ServerList() {
     return (
         <div className="space-y-8">
             {/* Servers Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {servers.map((server, index) => (
                     <div
                         key={server.guild_id}
@@ -77,31 +77,33 @@ export default function ServerList() {
                         }`}
                         style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                        <div className="p-6">
-                            <div className="flex items-center space-x-4">
-                                <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                        <div className="p-4 md:p-6">
+                            <div className="flex items-center space-x-3 md:space-x-4">
+                                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-primary rounded-full flex items-center justify-center text-white text-lg md:text-xl font-bold shadow-lg flex-shrink-0">
                                     {server.guild_name.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-lg font-semibold text-gray-900 truncate">
+                                    <h3 className="text-base md:text-lg font-semibold text-gray-900 truncate">
                                         {server.guild_name}
                                     </h3>
-                                    <div className="flex items-center text-sm text-gray-500 mt-1">
-                                        <Hash className="w-4 h-4 mr-1" />
-                                        <span className="truncate">{server.guild_id}</span>
+                                    <div className="flex items-center text-xs md:text-sm text-gray-500 mt-1">
+                                        <Hash className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+                                        <span className="truncate text-xs">{server.guild_id}</span>
                                     </div>
                                 </div>
-                                <ChevronRight className="w-5 h-5 text-gray-400" />
+                                <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-gray-400 flex-shrink-0" />
                             </div>
 
-                            <div className="mt-4 flex items-center justify-between">
-                                <div className="flex items-center text-sm text-gray-600">
-                                    <Server className="w-4 h-4 mr-1" />
-                                    <span>Discord Server</span>
+                            <div className="mt-3 md:mt-4 flex items-center justify-between">
+                                <div className="flex items-center text-xs md:text-sm text-gray-600">
+                                    <Server className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+                                    <span className="hidden sm:inline">Discord Server</span>
+                                    <span className="sm:hidden">Server</span>
                                 </div>
                                 {selectedServer?.guild_id === server.guild_id && (
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-discord-blurple text-white">
-                                        Đã chọn
+                                    <span className="inline-flex items-center px-2 py-1 md:px-2.5 md:py-0.5 rounded-full text-xs font-medium bg-discord-blurple text-white">
+                                        <span className="hidden sm:inline">Đã chọn</span>
+                                        <span className="sm:hidden">✓</span>
                                     </span>
                                 )}
                             </div>
